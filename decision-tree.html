@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicting Student Dropout Risk - Decision Tree</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .node-active {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+            transform: scale(1.05);
+        }
+        .node-highlight {
+            stroke: #3b82f6 !important;
+            stroke-width: 3px !important;
+            filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.5));
+        }
+        .text-highlight {
+            fill: #1d4ed8 !important;
+            font-weight: 800 !important;
+        }
+        .line-highlight {
+            stroke: #3b82f6 !important;
+            stroke-width: 4px !important;
+            stroke-dasharray: 0;
+        }
+        .node-transition {
+            transition: all 0.3s ease-in-out;
+        }
+        .scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .scroll-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        svg path, svg rect, svg circle {
+            transition: all 0.4s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans leading-relaxed">
+
+    <!-- Header -->
+    <header class="bg-white border-b py-8 px-4 text-center">
+        <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight">How Decision Trees Work</h1>
+        <p class="mt-3 text-slate-500 max-w-2xl mx-auto text-lg">From conceptual components to live algorithmic execution in a hiring scenario.</p>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-6 space-y-12">
+
+        <!-- SECTION 1: Exact Replication of User Image Design -->
+        <section>
+            <div class="flex items-center gap-2 mb-6">
+                <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-bold">Step 1</span>
+                <h2 class="text-2xl font-bold">Core Design Components</h2>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-sm border p-12 flex flex-col md:flex-row items-center md:items-start gap-8">
+                <div class="flex flex-wrap justify-center items-center gap-4 md:gap-12 w-full md:w-2/3">
+                    
+                    <!-- Root Node Design -->
+                    <div id="comp-root" class="node-transition flex flex-col items-center group cursor-pointer">
+                        <div class="w-24 h-24 rounded-full border-4 border-emerald-500 flex items-center justify-center bg-white text-4xl font-bold text-slate-700 shadow-sm">?</div>
+                        <div class="mt-4 text-center">
+                            <span class="font-bold text-lg block">Root Node</span>
+                            <span class="text-xs text-slate-400 uppercase tracking-widest">The Start</span>
+                        </div>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="hidden md:block">
+                        <svg width="60" height="24" viewBox="0 0 60 24" fill="none">
+                            <path d="M0 12H54M54 12L44 2M54 12L44 22" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+
+                    <!-- Internal/Decision Node -->
+                    <div id="comp-branch" class="node-transition flex flex-col items-center cursor-pointer">
+                        <div class="relative">
+                            <div class="w-32 h-20 border-4 border-emerald-500 bg-white flex items-center justify-center font-bold text-xl shadow-sm">Yes</div>
+                            <!-- Small Branching Decoration -->
+                            <div class="absolute -right-10 top-0 h-full flex flex-col justify-around">
+                                <div class="w-8 h-8 border-2 border-emerald-300 bg-emerald-50 flex items-center justify-center text-[10px] font-bold">YES</div>
+                                <div class="w-8 h-8 border-2 border-emerald-300 bg-emerald-50 flex items-center justify-center text-[10px] font-bold">NO</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <span class="font-bold text-lg block">Decision Node</span>
+                            <span class="text-xs text-slate-400 uppercase tracking-widest">The Branching</span>
+                        </div>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="hidden md:block">
+                        <svg width="60" height="24" viewBox="0 0 60 24" fill="none">
+                            <path d="M0 12H54M54 12L44 2M54 12L44 22" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+
+                    <!-- Leaf Node -->
+                    <div id="comp-leaf" class="node-transition flex flex-col items-center cursor-pointer">
+                        <div class="w-32 h-20 border-4 border-emerald-500 bg-white flex items-center justify-center text-4xl shadow-sm">✓</div>
+                        <div class="mt-4 text-center">
+                            <span class="font-bold text-lg block">Leaf Node</span>
+                            <span class="text-xs text-slate-400 uppercase tracking-widest">The Outcome</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="info-box" class="bg-emerald-900 text-emerald-50 p-6 rounded-2xl w-full md:w-1/3 text-center border-b-4 border-emerald-700">
+                    Interact with the components above to see their role in the algorithm.
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Simulation Row -->
+        <section>
+            <div class="flex items-center gap-2 mb-6">
+                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">Execution</span>
+                <h2 class="text-2xl font-bold text-slate-800">Example: Is the student at risk in the course?</h2>
+            </div>
+
+            <div class="grid lg:grid-cols-5 gap-6">
+                
+                <!-- Decision Map (Left) -->
+                <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border flex flex-col">
+                    <div class="p-4 border-b bg-slate-50 flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Dropout Model Visualization</span>
+                        <div class="flex items-center gap-4 text-xs font-medium">
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 bg-blue-500 rounded-full"></span> Traversed Path</span>
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 bg-slate-300 rounded-full"></span> Untested</span>
+                        </div>
+                    </div>
+                    <div class="scroll-container overflow-x-auto p-4 flex items-center justify-center min-h-[500px]">
+                        <svg id="risk-tree-svg" width="650" height="480" viewBox="0 0 650 480">
+                            <g id="tree-lines-g"></g>
+                            <g id="tree-nodes-g"></g>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Simulation Panel (Right) -->
+                <div class="lg:col-span-2 flex flex-col gap-6">
+                    <div class="bg-white rounded-2xl shadow-sm border p-8 flex-1 border-t-4 border-blue-500">
+                        <div class="flex justify-between items-start mb-6">
+                            <h3 class="text-xl font-bold text-slate-800">Track and Analysis</h3>
+                            <button id="reset-btn" class="hidden text-xs font-bold text-blue-500 hover:text-blue-700 uppercase tracking-widest">Restart Evaluation</button>
+                        </div>
+                        
+                        <div id="game-ui">
+                            <div id="question-text" class="text-xl font-semibold text-slate-700 mb-8 leading-snug">
+                                Loading Student Metrics...
+                            </div>
+                            <div id="btn-group" class="flex flex-col gap-3">
+                                <!-- Option buttons -->
+                            </div>
+                        </div>
+
+                        <div id="result-ui" class="hidden">
+                            <div id="result-container" class="p-6 border-2 rounded-2xl text-center">
+                                <div id="result-icon" class="text-5xl mb-3">📋</div>
+                                <h4 id="result-title" class="text-2xl font-bold mb-2">Outcome</h4>
+                                <p id="result-desc" class="text-sm italic"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mini Console -->
+                    <div class="bg-slate-900 rounded-2xl p-6 text-blue-300 font-mono text-xs h-40 overflow-hidden flex flex-col border-b-4 border-slate-800 shadow-inner">
+                        <div class="flex justify-between mb-2 border-b border-slate-800 pb-1">
+                            <span>RISK_ENGINE_LOG</span>
+                            <span class="animate-pulse">● ACTIVE</span>
+                        </div>
+                        <div id="trace-content" class="overflow-y-auto space-y-1 scroll-container">
+                            <p>> Initializing classifier...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Updated Tree Logic for Student Dropout
+        const treeData = {
+            id: "root",
+            label: "Attendance < 60%?",
+            options: [
+                {
+                    text: "Yes (Frequent Absence)",
+                    id: "att-low",
+                    child: { id: "leaf-high-1", result: "High Risk", icon: "🚩", color: "red", reason: "Critical attendance issues often indicate immediate dropout risk." }
+                },
+                {
+                    text: "No (Steady Attendance)",
+                    id: "att-ok",
+                    child: {
+                        id: "midterm",
+                        label: "Midterm < 50%?",
+                        options: [
+                            {
+                                text: "Yes",
+                                id: "mid-low",
+                                child: { id: "leaf-high-2", result: "High Risk", icon: "⚠️", color: "red", reason: "Failing core exams despite attendance suggests severe academic struggle." }
+                            },
+                            {
+                                text: "No",
+                                id: "mid-ok",
+                                child: {
+                                    id: "assignments",
+                                    label: "Assignments Missing?",
+                                    options: [
+                                        { 
+                                            text: "Yes", 
+                                            id: "task-miss", 
+                                            child: { id: "leaf-medium", result: "Medium Risk", icon: "🟠", color: "orange", reason: "Inconsistent engagement with coursework. Intervention recommended." } 
+                                        },
+                                        { 
+                                            text: "No", 
+                                            id: "task-ok", 
+                                            child: { id: "leaf-low", result: "Low Risk", icon: "✅", color: "emerald", reason: "On track for success. Student shows healthy engagement metrics." } 
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        };
+
+        const nodesG = document.getElementById('tree-nodes-g');
+        const linesG = document.getElementById('tree-lines-g');
+        const traceContent = document.getElementById('trace-content');
+
+        // Draw Map Logic
+        function drawMap(node, x, y, span, parentId = null) {
+            const isLeaf = !!node.result;
+            const nodeId = node.id;
+            
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", isLeaf ? "circle" : "rect");
+            if(isLeaf) {
+                rect.setAttribute("cx", x); rect.setAttribute("cy", y); rect.setAttribute("r", 34);
+            } else {
+                rect.setAttribute("x", x - 65); rect.setAttribute("y", y - 25);
+                rect.setAttribute("width", 130); rect.setAttribute("height", 50);
+                rect.setAttribute("rx", 8);
+            }
+            rect.setAttribute("fill", "white");
+            rect.setAttribute("stroke", "#cbd5e1");
+            rect.setAttribute("stroke-width", "2");
+            rect.setAttribute("id", `map-node-${nodeId}`);
+            nodesG.appendChild(rect);
+
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", x); text.setAttribute("y", y + 5);
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("font-size", isLeaf ? "10" : "11");
+            text.setAttribute("font-weight", "bold");
+            text.setAttribute("fill", "#64748b");
+            text.setAttribute("id", `map-text-${nodeId}`);
+            text.textContent = isLeaf ? node.result : node.label;
+            nodesG.appendChild(text);
+
+            if (node.options) {
+                node.options.forEach((opt, i) => {
+                    const childSpan = span / node.options.length;
+                    const childX = (x - span/2) + (childSpan * i) + (childSpan/2);
+                    const childY = y + 120;
+                    const edgeId = `edge-${nodeId}-${opt.id}`;
+
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    path.setAttribute("d", `M ${x} ${y + 25} L ${childX} ${childY - 25}`);
+                    path.setAttribute("stroke", "#e2e8f0");
+                    path.setAttribute("stroke-width", "2");
+                    path.setAttribute("stroke-dasharray", "4");
+                    path.setAttribute("id", edgeId);
+                    linesG.appendChild(path);
+
+                    const oText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    oText.setAttribute("x", (x + childX)/2 + (i===0 ? -25 : 25));
+                    oText.setAttribute("y", (y + childY)/2);
+                    oText.setAttribute("text-anchor", "middle");
+                    oText.setAttribute("font-size", "10");
+                    oText.setAttribute("font-weight", "bold");
+                    oText.setAttribute("fill", "#94a3b8");
+                    oText.textContent = opt.text.split(' ')[0]; // Just 'Yes' or 'No'
+                    nodesG.appendChild(oText);
+
+                    drawMap(opt.child, childX, childY, childSpan, nodeId);
+                });
+            }
+        }
+
+        let currentNode = treeData;
+        const qText = document.getElementById('question-text');
+        const btnGroup = document.getElementById('btn-group');
+        const resUI = document.getElementById('result-ui');
+        const gameUI = document.getElementById('game-ui');
+        const resetBtn = document.getElementById('reset-btn');
+
+        function updateSimulation() {
+            // Map Styling
+            document.getElementById(`map-node-${currentNode.id}`).classList.add('node-highlight');
+            document.getElementById(`map-text-${currentNode.id}`).classList.add('text-highlight');
+            
+            if (currentNode.result) {
+                gameUI.classList.add('hidden');
+                resUI.classList.remove('hidden');
+                resetBtn.classList.remove('hidden');
+                
+                const resContainer = document.getElementById('result-container');
+                const title = document.getElementById('result-title');
+                
+                title.innerText = currentNode.result;
+                document.getElementById('result-desc').innerText = currentNode.reason;
+                document.getElementById('result-icon').innerText = currentNode.icon;
+
+                // Color themes for results
+                const themes = {
+                    red: 'bg-red-50 border-red-200 text-red-900',
+                    orange: 'bg-orange-50 border-orange-200 text-orange-900',
+                    emerald: 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                };
+                resContainer.className = `p-6 border-2 rounded-2xl text-center ${themes[currentNode.color]}`;
+                
+                addLog(`Result: ${currentNode.result}`, "text-white font-bold");
+            } else {
+                qText.innerText = currentNode.label;
+                addLog(`Checking feature: ${currentNode.label.split('?')[0]}`);
+                btnGroup.innerHTML = '';
+                currentNode.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all font-medium text-slate-700 shadow-sm flex justify-between items-center group";
+                    btn.innerHTML = `${opt.text} <span class="opacity-0 group-hover:opacity-100 text-blue-400">→</span>`;
+                    btn.onclick = () => {
+                        const edge = document.getElementById(`edge-${currentNode.id}-${opt.id}`);
+                        if(edge) edge.classList.add('line-highlight');
+                        addLog(`Condition: ${opt.text}`);
+                        currentNode = opt.child;
+                        updateSimulation();
+                    };
+                    btnGroup.appendChild(btn);
+                });
+            }
+        }
+
+        function addLog(msg, cls = "text-blue-300") {
+            const p = document.createElement('p');
+            p.className = cls;
+            p.innerHTML = `<span class="opacity-50">></span> ${msg}`;
+            traceContent.appendChild(p);
+            traceContent.scrollTop = traceContent.scrollHeight;
+        }
+
+        function reset() {
+            currentNode = treeData;
+            gameUI.classList.remove('hidden');
+            resUI.classList.add('hidden');
+            resetBtn.classList.add('hidden');
+            traceContent.innerHTML = '<p>> Resetting analysis model...</p>';
+            document.querySelectorAll('.node-highlight, .text-highlight, .line-highlight').forEach(el => {
+                el.classList.remove('node-highlight', 'text-highlight', 'line-highlight');
+            });
+            updateSimulation();
+        }
+
+        resetBtn.onclick = reset;
+
+        // Info box interactions
+        const infoMap = {
+            'comp-root': { t: 'Attendance Metric', d: 'The strongest predictor. Students missing more than 40% of classes are at immediate risk.' },
+            'comp-branch': { t: 'Academic Threshold', d: 'Secondary checks evaluate actual grades (Midterm) and effort (Assignments).' },
+            'comp-leaf': { t: 'Risk Classification', d: 'The final label assigned to the student for intervention prioritization.' }
+        };
+        const infoBox = document.getElementById('info-box');
+        Object.keys(infoMap).forEach(id => {
+            const el = document.getElementById(id);
+            el.onmouseenter = () => {
+                el.classList.add('node-active');
+                infoBox.innerHTML = `<h4 class="font-bold text-lg mb-1">${infoMap[id].t}</h4><p class="text-sm opacity-90">${infoMap[id].d}</p>`;
+            };
+            el.onmouseleave = () => {
+                el.classList.remove('node-active');
+                infoBox.innerHTML = 'Hover over the components to see how we calculate student risk levels.';
+            };
+        });
+
+        // Init
+        drawMap(treeData, 325, 40, 600);
+        updateSimulation();
+
+    </script>
+</body>
+</html>
