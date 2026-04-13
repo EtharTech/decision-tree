@@ -1,229 +1,266 @@
-import React, { useState } from 'react';
-import { 
-  ChevronRight, 
-  ChevronDown, 
-  Play, 
-  Database, 
-  GitBranch, 
-  CheckCircle2, 
-  Info, 
-  ArrowRight, 
-  Target, 
-  ThermometerSun, 
-  BatteryCharging, 
-  Calendar 
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Trees Explained</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 p-4 md:p-8">
 
-const App = () => {
-  const [activeStep, setActiveStep] = useState(0);
-
-  // Updated data: Energy is the only feature that splits perfectly at the start.
-  // Weather is mixed (Sunny has both Yes/No, Rainy has both Yes/No).
-  // Weekend is mixed (No has both Yes/No).
-  const fullData = [
-    { weather: 'Sunny', energy: 'High', weekend: 'No', gym: 'Yes' },
-    { weather: 'Sunny', energy: 'Low', weekend: 'No', gym: 'No' },
-    { weather: 'Rainy', energy: 'High', weekend: 'Yes', gym: 'Yes' },
-    { weather: 'Rainy', energy: 'Low', weekend: 'Yes', gym: 'Yes' },
-    { weather: 'Rainy', energy: 'Low', weekend: 'No', gym: 'No' },
-  ];
-
-  const DataTable = ({ rows, highlightColor = "bg-white" }) => (
-    <div className="overflow-x-auto shadow-sm rounded-lg border border-slate-200">
-      <table className="w-full text-left border-collapse text-[10px] md:text-xs">
-        <thead>
-          <tr className="bg-slate-100">
-            <th className="p-1.5 border">Weather</th>
-            <th className="p-1.5 border">Energy</th>
-            <th className="p-1.5 border">Weekend?</th>
-            <th className="p-1.5 border bg-indigo-50 text-indigo-700">Gym?</th>
-          </tr>
-        </thead>
-        <tbody className={highlightColor}>
-          {rows.map((row, i) => (
-            <tr key={i}>
-              <td className="p-1.5 border">{row.weather}</td>
-              <td className="p-1.5 border">{row.energy}</td>
-              <td className="p-1.5 border">{row.weekend}</td>
-              <td className={`p-1.5 border font-bold ${row.gym === 'Yes' ? 'text-green-600' : 'text-red-600'}`}>{row.gym}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-
-  const steps = [
-    {
-      title: "The 3-Feature Challenge",
-      icon: <Database className="w-6 h-6" />,
-      content: (
-        <div className="space-y-4">
-          <p className="text-slate-700 text-sm">We'll use these three features to decide: <b>"Should I go to the Gym?"</b></p>
-          <DataTable rows={fullData} />
-          <div className="bg-indigo-50 p-3 rounded-lg text-xs text-indigo-700">
-            <b>Current Data:</b> 5 rows total. Notice how <b>Weather</b> and <b>Weekend</b> answers are inconsistent, but <b>Energy</b> shows a pattern.
-          </div>
-        </div>
-      )
-    },
-    {
-      title: "Step 1: Finding the Root",
-      icon: <Target className="w-6 h-6" />,
-      content: (
-        <div className="space-y-4">
-          <p className="text-sm">We look for the feature that provides the "cleanest" (purest) split:</p>
-          <div className="grid grid-cols-1 gap-2">
-            <div className="flex items-center gap-3 p-2 border rounded-xl bg-white opacity-60">
-              <ThermometerSun className="text-orange-500 w-4 h-4" />
-              <div className="flex-1 text-xs"><b>Weather?</b> (Rainy: 2 Yes / 1 No). <b>Mixed!</b></div>
-            </div>
-            <div className="flex items-center gap-3 p-2 border-2 border-green-500 rounded-xl bg-green-50">
-              <BatteryCharging className="text-yellow-500 w-4 h-4" />
-              <div className="flex-1 text-xs font-bold">Energy? (High: 2 Yes / 0 No). <b>Pure!</b></div>
-              <div className="px-2 py-0.5 bg-green-200 text-green-800 text-[8px] font-bold rounded">WINNER</div>
-            </div>
-            <div className="flex items-center gap-3 p-2 border rounded-xl bg-white opacity-60">
-              <Calendar className="text-blue-500 w-4 h-4" />
-              <div className="flex-1 text-xs"><b>Weekend?</b> (No: 1 Yes / 2 No). <b>Mixed!</b></div>
-            </div>
-          </div>
-          <DataTable rows={fullData} />
-        </div>
-      )
-    },
-    {
-      title: "Step 2: The First Split",
-      icon: <Play className="w-6 h-6" />,
-      content: (
-        <div className="space-y-4">
-          <div className="flex flex-col items-center">
-            <div className="w-32 p-2 bg-indigo-600 text-white rounded text-center shadow text-xs font-bold">Energy?</div>
-            <div className="flex w-full justify-around mt-4">
-              <div className="text-center">
-                <p className="text-[10px] font-bold text-green-600">HIGH ENERGY</p>
-                <DataTable rows={fullData.filter(d => d.energy === 'High')} highlightColor="bg-green-50" />
-                <p className="text-[10px] mt-1 font-bold text-green-700">Result: YES (Pure Path)</p>
-              </div>
-              <div className="text-center">
-                <p className="text-[10px] font-bold text-red-600">LOW ENERGY</p>
-                <DataTable rows={fullData.filter(d => d.energy === 'Low')} highlightColor="bg-red-50" />
-                <p className="text-[10px] mt-1 font-bold text-slate-500 italic">Result: ??? (Still Mixed)</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      title: "Step 3: Branching the 'Low' Path",
-      icon: <GitBranch className="w-6 h-6" />,
-      content: (
-        <div className="space-y-4">
-          <p className="text-sm">Focusing only on the 3 rows where Energy is <b>Low</b>:</p>
-          <DataTable rows={fullData.filter(d => d.energy === 'Low')} highlightColor="bg-yellow-50" />
-          <p className="text-xs">Now we look at the remaining features (Weather and Weekend) for these 3 rows.</p>
-          <div className="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
-            <p className="text-xs text-blue-900 font-bold">The Winner is Weekend:</p>
-            <p className="text-xs text-blue-800">Weekend (Yes) = <b>Yes</b> | Weekend (No) = <b>No</b>. A pure split!</p>
-          </div>
-        </div>
-      )
-    },
-    {
-      title: "Final Result: The 3-Level Tree",
-      icon: <CheckCircle2 className="w-6 h-6" />,
-      content: (
-        <div className="flex flex-col items-center">
-          <div className="w-32 p-2 bg-indigo-600 text-white rounded text-center shadow text-xs font-bold">Energy?</div>
-          <div className="flex w-full justify-center gap-8 mt-2">
-            <div className="flex flex-col items-center">
-              <div className="h-4 w-px bg-slate-300"></div>
-              <p className="text-[8px] font-bold">HIGH</p>
-              <div className="p-2 bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-[10px]">Yes</div>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="h-4 w-px bg-slate-300"></div>
-              <p className="text-[8px] font-bold">LOW</p>
-              <div className="w-24 p-1.5 bg-indigo-400 text-white rounded text-center text-[10px] font-bold">Weekend?</div>
-              <div className="flex gap-4 mt-2">
-                 <div className="flex flex-col items-center">
-                    <p className="text-[8px] font-bold">NO</p>
-                    <div className="p-1.5 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-[8px]">No</div>
-                 </div>
-                 <div className="flex flex-col items-center">
-                    <p className="text-[8px] font-bold">YES</p>
-                    <div className="p-1.5 bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-[8px]">Yes</div>
-                 </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-4 w-full">
-            <p className="text-[10px] font-bold mb-1">Final Validation Table:</p>
-            <DataTable rows={fullData} />
-          </div>
-        </div>
-      )
-    }
-  ];
-
-  return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 p-4 md:p-8">
-      <div className="max-w-3xl mx-auto">
-        <header className="mb-6 text-center">
-          <h1 className="text-3xl font-extrabold text-indigo-900 mb-1">Decision Trees</h1>
-          <p className="text-slate-600 text-sm italic">Tracking data partitioning step by step</p>
+    <div class="max-w-3xl mx-auto" x-data="{ 
+        activeStep: 0,
+        fullData: [
+            { weather: 'Sunny', energy: 'High', weekend: 'No', gym: 'Yes' },
+            { weather: 'Sunny', energy: 'Low', weekend: 'No', gym: 'No' },
+            { weather: 'Rainy', energy: 'High', weekend: 'Yes', gym: 'Yes' },
+            { weather: 'Rainy', energy: 'Low', weekend: 'Yes', gym: 'Yes' },
+            { weather: 'Rainy', energy: 'Low', weekend: 'No', gym: 'No' }
+        ],
+        stepsCount: 5
+    }">
+        
+        <!-- Header -->
+        <header class="mb-6 text-center">
+            <h1 class="text-3xl font-extrabold text-indigo-900 mb-1">Decision Trees</h1>
+            <p class="text-slate-600 text-sm italic">Tracking data partitioning step by step</p>
         </header>
 
-        <div className="flex gap-2 mb-6">
-          {steps.map((_, idx) => (
-            <div key={idx} className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${idx <= activeStep ? 'bg-indigo-500' : 'bg-slate-200'}`} />
-          ))}
+        <!-- Progress Bar -->
+        <div class="flex gap-2 mb-6">
+            <template x-for="i in stepsCount">
+                <div :class="activeStep >= (i-1) ? 'bg-indigo-500' : 'bg-slate-200'" class="h-1.5 flex-1 rounded-full transition-all duration-300"></div>
+            </template>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 min-h-[500px] flex flex-col">
-          <div className="bg-indigo-50 p-4 flex items-center gap-4 border-b border-indigo-100">
-            <div className="p-2 bg-indigo-500 text-white rounded-lg">
-              {steps[activeStep].icon}
+        <!-- Step Container -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 min-h-[500px] flex flex-col">
+            
+            <!-- Step Header -->
+            <div class="bg-indigo-50 p-4 flex items-center gap-4 border-b border-indigo-100">
+                <div class="p-2 bg-indigo-500 text-white rounded-lg">
+                    <!-- Icon placeholder logic -->
+                    <svg x-show="activeStep === 0" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                    <svg x-show="activeStep === 1" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg x-show="activeStep === 2" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
+                    <svg x-show="activeStep === 3" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 013 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1"></path></svg>
+                    <svg x-show="activeStep === 4" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <div>
+                    <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest" x-text="'Stage ' + (activeStep + 1)"></p>
+                    <h2 class="text-lg font-bold text-indigo-900" x-text="[
+                        'The 3-Feature Challenge',
+                        'Step 1: Finding the Root',
+                        'Step 2: The First Split',
+                        'Step 3: Branching the \'Low\' Path',
+                        'Final Result: The 3-Level Tree'
+                    ][activeStep]"></h2>
+                </div>
             </div>
-            <div>
-              <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Stage {activeStep + 1}</p>
-              <h2 className="text-lg font-bold text-indigo-900">{steps[activeStep].title}</h2>
+
+            <!-- Step Content -->
+            <div class="p-5 flex-grow">
+                
+                <!-- Step 0 -->
+                <div x-show="activeStep === 0" x-cloak class="space-y-4">
+                    <p class="text-slate-700 text-sm">We'll use these three features to decide: <b>"Should I go to the Gym?"</b></p>
+                    <div class="overflow-x-auto shadow-sm rounded-lg border border-slate-200">
+                        <table class="w-full text-left border-collapse text-[10px] md:text-xs">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    <th class="p-1.5 border">Weather</th><th class="p-1.5 border">Energy</th><th class="p-1.5 border">Weekend?</th><th class="p-1.5 border bg-indigo-50 text-indigo-700">Gym?</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                <template x-for="row in fullData">
+                                    <tr>
+                                        <td class="p-1.5 border" x-text="row.weather"></td>
+                                        <td class="p-1.5 border" x-text="row.energy"></td>
+                                        <td class="p-1.5 border" x-text="row.weekend"></td>
+                                        <td class="p-1.5 border font-bold" :class="row.gym === 'Yes' ? 'text-green-600' : 'text-red-600'" x-text="row.gym"></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bg-indigo-50 p-3 rounded-lg text-xs text-indigo-700">
+                        <b>Current Data:</b> 5 rows total. Notice how <b>Weather</b> and <b>Weekend</b> answers are inconsistent, but <b>Energy</b> shows a pattern.
+                    </div>
+                </div>
+
+                <!-- Step 1 -->
+                <div x-show="activeStep === 1" x-cloak class="space-y-4">
+                    <p class="text-sm">We look for the feature that provides the "cleanest" (purest) split:</p>
+                    <div class="grid grid-cols-1 gap-2">
+                        <div class="flex items-center gap-3 p-2 border rounded-xl bg-white opacity-60 text-xs">
+                            <span class="text-orange-500">☀️</span>
+                            <div class="flex-1"><b>Weather?</b> (Rainy: 2 Yes / 1 No). <b>Mixed!</b></div>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 border-2 border-green-500 rounded-xl bg-green-50 text-xs font-bold">
+                            <span class="text-yellow-500">⚡</span>
+                            <div class="flex-1">Energy? (High: 2 Yes / 0 No). <b>Pure!</b></div>
+                            <div class="px-2 py-0.5 bg-green-200 text-green-800 text-[8px] font-bold rounded">WINNER</div>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 border rounded-xl bg-white opacity-60 text-xs">
+                            <span class="text-blue-500">📅</span>
+                            <div class="flex-1"><b>Weekend?</b> (No: 1 Yes / 2 No). <b>Mixed!</b></div>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto shadow-sm rounded-lg border border-slate-200">
+                        <table class="w-full text-left border-collapse text-[10px] md:text-xs">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    <th class="p-1.5 border">Weather</th><th class="p-1.5 border">Energy</th><th class="p-1.5 border">Weekend?</th><th class="p-1.5 border">Gym?</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                <template x-for="row in fullData">
+                                    <tr>
+                                        <td class="p-1.5 border" x-text="row.weather"></td>
+                                        <td class="p-1.5 border font-bold text-indigo-600" x-text="row.energy"></td>
+                                        <td class="p-1.5 border" x-text="row.weekend"></td>
+                                        <td class="p-1.5 border font-bold" :class="row.gym === 'Yes' ? 'text-green-600' : 'text-red-600'" x-text="row.gym"></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div x-show="activeStep === 2" x-cloak class="space-y-4 text-center">
+                    <div class="inline-block w-32 p-2 bg-indigo-600 text-white rounded shadow text-xs font-bold">Energy?</div>
+                    <div class="flex w-full justify-around mt-4">
+                        <div class="text-center w-1/2 px-1">
+                            <p class="text-[10px] font-bold text-green-600 mb-1 uppercase">High Energy</p>
+                            <div class="overflow-x-auto rounded border border-slate-200">
+                                <table class="w-full text-[10px] bg-green-50">
+                                    <template x-for="row in fullData.filter(d => d.energy === 'High')">
+                                        <tr><td class="p-1 border" x-text="row.weather"></td><td class="p-1 border" x-text="row.energy"></td><td class="p-1 border" x-text="row.weekend"></td><td class="p-1 border font-bold text-green-600" x-text="row.gym"></td></tr>
+                                    </template>
+                                </table>
+                            </div>
+                            <p class="text-[10px] mt-1 font-bold text-green-700">Result: YES (Pure Path)</p>
+                        </div>
+                        <div class="text-center w-1/2 px-1">
+                            <p class="text-[10px] font-bold text-red-600 mb-1 uppercase">Low Energy</p>
+                            <div class="overflow-x-auto rounded border border-slate-200">
+                                <table class="w-full text-[10px] bg-red-50">
+                                    <template x-for="row in fullData.filter(d => d.energy === 'Low')">
+                                        <tr><td class="p-1 border" x-text="row.weather"></td><td class="p-1 border" x-text="row.energy"></td><td class="p-1 border" x-text="row.weekend"></td><td class="p-1 border font-bold" :class="row.gym === 'Yes' ? 'text-green-600' : 'text-red-600'" x-text="row.gym"></td></tr>
+                                    </template>
+                                </table>
+                            </div>
+                            <p class="text-[10px] mt-1 font-bold text-slate-500 italic">Result: ??? (Still Mixed)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div x-show="activeStep === 3" x-cloak class="space-y-4">
+                    <p class="text-sm">Focusing only on the 3 rows where Energy is <b>Low</b>:</p>
+                    <div class="overflow-x-auto shadow-sm rounded-lg border border-slate-200">
+                        <table class="w-full text-left border-collapse text-[10px] md:text-xs">
+                            <tbody class="bg-yellow-50">
+                                <template x-for="row in fullData.filter(d => d.energy === 'Low')">
+                                    <tr>
+                                        <td class="p-1.5 border" x-text="row.weather"></td>
+                                        <td class="p-1.5 border" x-text="row.energy"></td>
+                                        <td class="p-1.5 border font-bold text-indigo-600" x-text="row.weekend"></td>
+                                        <td class="p-1.5 border font-bold" :class="row.gym === 'Yes' ? 'text-green-600' : 'text-red-600'" x-text="row.gym"></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                        <p class="text-xs text-blue-900 font-bold">The Winner is Weekend:</p>
+                        <p class="text-xs text-blue-800">Weekend (Yes) = <b>Yes</b> | Weekend (No) = <b>No</b>. A pure split!</p>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div x-show="activeStep === 4" x-cloak class="flex flex-col items-center">
+                    <div class="w-32 p-2 bg-indigo-600 text-white rounded text-center shadow text-xs font-bold">Energy?</div>
+                    <div class="flex w-full justify-center gap-8 mt-2">
+                        <div class="flex flex-col items-center">
+                            <div class="h-4 w-px bg-slate-300"></div>
+                            <p class="text-[8px] font-bold">HIGH</p>
+                            <div class="p-2 bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-[10px]">Yes</div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="h-4 w-px bg-slate-300"></div>
+                            <p class="text-[8px] font-bold">LOW</p>
+                            <div class="w-24 p-1.5 bg-indigo-400 text-white rounded text-center text-[10px] font-bold">Weekend?</div>
+                            <div class="flex gap-4 mt-2">
+                                <div class="flex flex-col items-center">
+                                    <p class="text-[8px] font-bold">NO</p>
+                                    <div class="p-1.5 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-[8px]">No</div>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <p class="text-[8px] font-bold">YES</p>
+                                    <div class="p-1.5 bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-[8px]">Yes</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 w-full">
+                        <p class="text-[10px] font-bold mb-1">Final Validation Table:</p>
+                        <div class="overflow-x-auto shadow-sm rounded-lg border border-slate-200">
+                            <table class="w-full text-left border-collapse text-[10px] md:text-xs">
+                                <thead>
+                                    <tr class="bg-slate-100">
+                                        <th class="p-1 border">Weather</th><th class="p-1 border">Energy</th><th class="p-1 border">Weekend?</th><th class="p-1 border">Gym?</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="row in fullData">
+                                        <tr>
+                                            <td class="p-1 border" x-text="row.weather"></td><td class="p-1 border" x-text="row.energy"></td><td class="p-1 border" x-text="row.weekend"></td><td class="p-1 border font-bold" :class="row.gym === 'Yes' ? 'text-green-600' : 'text-red-600'" x-text="row.gym"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-          </div>
 
-          <div className="p-5 flex-grow">
-            {steps[activeStep].content}
-          </div>
+            <!-- Footer Controls -->
+            <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+                <button 
+                    @click="activeStep = Math.max(0, activeStep - 1)"
+                    :disabled="activeStep === 0"
+                    :class="activeStep === 0 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-200'"
+                    class="px-4 py-1.5 rounded-lg text-sm font-bold transition-all"
+                >
+                    Back
+                </button>
+                
+                <button 
+                    x-show="activeStep < stepsCount - 1"
+                    @click="activeStep = activeStep + 1"
+                    class="px-6 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-lg hover:bg-indigo-700 transition-all flex items-center gap-2"
+                >
+                    Next 
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
 
-          <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
-            <button 
-              onClick={() => setActiveStep(Math.max(0, activeStep - 1))}
-              disabled={activeStep === 0}
-              className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${activeStep === 0 ? 'text-slate-300' : 'text-slate-600 hover:bg-slate-200'}`}
-            >
-              Back
-            </button>
-            <button 
-              onClick={() => setActiveStep(Math.min(steps.length - 1, activeStep + 1))}
-              className={`px-6 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-lg hover:bg-indigo-700 transition-all flex items-center gap-2 ${activeStep === steps.length - 1 ? 'hidden' : ''}`}
-            >
-              Next <ChevronRight className="w-4 h-4" />
-            </button>
-            {activeStep === steps.length - 1 && (
-              <button 
-                onClick={() => setActiveStep(0)}
-                className="px-6 py-1.5 bg-green-600 text-white rounded-lg text-sm font-bold shadow-lg hover:bg-green-700 transition-all"
-              >
-                Start Over
-              </button>
-            )}
-          </div>
+                <button 
+                    x-show="activeStep === stepsCount - 1"
+                    @click="activeStep = 0"
+                    class="px-6 py-1.5 bg-green-600 text-white rounded-lg text-sm font-bold shadow-lg hover:bg-green-700 transition-all"
+                >
+                    Start Over
+                </button>
+            </div>
         </div>
-      </div>
     </div>
-  );
-};
 
-export default App;
+</body>
+</html>
